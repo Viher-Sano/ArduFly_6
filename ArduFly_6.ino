@@ -198,73 +198,73 @@ void loop() {
 		if (digitalRead(minusButton) == LOW) { endPointCH1--; beep(); } if (endPointCH1 == -1) { endPointCH1 = maxEndPoint; }
 		if (digitalRead(plassButton) == LOW) { endPointCH1++; beep(); } if (endPointCH1 == maxEndPoint + 1) { endPointCH1 = 0; }
 		lcd.setCursor(0, 1); lcd.print(endPointCH1); lcd.print("                ");
-		if (digitalRead(menuButton) == LOW && mix == 1) { key = 2; mix = 1; lcd_1 = 0; lcd_0 = 1; vst = 1; beep(); }
+		if (digitalRead(menuButton) == LOW && mix == 1) { EEPROM.write(0, endPointCH1); key = 2; mix = 1; lcd_1 = 0; lcd_0 = 1; vst = 1; beep(); }
 		break;
 	case 6: //End Point CH2
 		if (digitalRead(minusButton) == LOW) { endPointCH2--; beep(); } if (endPointCH2 == -1) { endPointCH2 = maxEndPoint; }
 		if (digitalRead(plassButton) == LOW) { endPointCH2++; beep(); } if (endPointCH2 == maxEndPoint + 1) { endPointCH2 = 0; }
 		lcd.setCursor(0, 1); lcd.print(endPointCH2); lcd.print("                ");
-		if (digitalRead(menuButton) == LOW && mix == 1) { key = 2; mix = 2; lcd_1 = 0; lcd_0 = 1; vst = 1; beep(); }
+		if (digitalRead(menuButton) == LOW && mix == 1) { EEPROM.write(2, endPointCH2); key = 2; mix = 2; lcd_1 = 0; lcd_0 = 1; vst = 1; beep(); }
 		break;
 	case 7: //End Point CH3
 		if (digitalRead(minusButton) == LOW) { endPointCH3--; beep(); } if (endPointCH3 == -1) { endPointCH3 = maxEndPoint; }
 		if (digitalRead(plassButton) == LOW) { endPointCH3++; beep(); } if (endPointCH3 == maxEndPoint + 1) { endPointCH3 = 0; }
 		lcd.setCursor(0, 1); lcd.print(endPointCH3); lcd.print("                ");
-		if (digitalRead(menuButton) == LOW && mix == 1) { key = 2; mix = 3; lcd_1 = 0; lcd_0 = 1; vst = 1; beep(); }
+		if (digitalRead(menuButton) == LOW && mix == 1) { EEPROM.write(4, endPointCH3); key = 2; mix = 3; lcd_1 = 0; lcd_0 = 1; vst = 1; beep(); }
 		break;
 	case 8: //End Point CH4
 		if (digitalRead(minusButton) == LOW) { endPointCH4--; beep(); } if (endPointCH4 == -1) { endPointCH4 = maxEndPoint; }
 		if (digitalRead(plassButton) == LOW) { endPointCH4++; beep(); } if (endPointCH4 == maxEndPoint + 1) { endPointCH4 = 0; }
 		lcd.setCursor(0, 1); lcd.print(endPointCH4); lcd.print("                ");
-		if (digitalRead(menuButton) == LOW && mix == 1) { key = 2; mix = 4; lcd_1 = 0; lcd_0 = 1; vst = 1; beep(); }
+		if (digitalRead(menuButton) == LOW && mix == 1) { EEPROM.write(6, endPointCH4); key = 2; mix = 4; lcd_1 = 0; lcd_0 = 1; vst = 1; beep(); }
 		break;
 	case 9: //End Point CH5
 		if (digitalRead(minusButton) == LOW) { endPointCH5--; beep(); } if (endPointCH5 == -1) { endPointCH5 = maxEndPoint; }
 		if (digitalRead(plassButton) == LOW) { endPointCH5++; beep(); } if (endPointCH5 == maxEndPoint + 1) { endPointCH5 = 0; }
 		lcd.setCursor(0, 1); lcd.print(endPointCH5); lcd.print("                ");
-		if (digitalRead(menuButton) == LOW && mix == 1) { key = 2; mix = 5; lcd_1 = 0; lcd_0 = 1; vst = 1; beep(); }
+		if (digitalRead(menuButton) == LOW && mix == 1) { EEPROM.write(8, endPointCH5); key = 2; mix = 5; lcd_1 = 0; lcd_0 = 1; vst = 1; beep(); }
 		break;
 	case 10: //End Point CH6
 		if (digitalRead(minusButton) == LOW) { endPointCH6--; beep(); } if (endPointCH6 == -1) { endPointCH6 = maxEndPoint; }
 		if (digitalRead(plassButton) == LOW) { endPointCH6++; beep(); } if (endPointCH6 == maxEndPoint + 1) { endPointCH6 = 0; }
 		lcd.setCursor(0, 1); lcd.print(endPointCH6); lcd.print("                ");
-		if (digitalRead(menuButton) == LOW && mix == 1) { key = 2; mix = 6; lcd_1 = 0; lcd_0 = 1; vst = 1; beep(); }
+		if (digitalRead(menuButton) == LOW && mix == 1) { EEPROM.write(10, endPointCH6); key = 2; mix = 6; lcd_1 = 0; lcd_0 = 1; vst = 1; beep(); }
 		break;
 	case 11: //Revers CH1
 		if (digitalRead(minusButton) == LOW) { reversCH1 = !reversCH1; beep(); }
 		if (digitalRead(plassButton) == LOW) { reversCH1 = !reversCH1; beep(); }
 		lcd.setCursor(0, 1); lcd.print(reversCH1 ? myStrings[11] : myStrings[12]); lcd.print("                ");
-		if (digitalRead(menuButton) == LOW && mix == 1) { key = 3; mix = 1; lcd_1 = 0; lcd_0 = 1; vst = 2; beep(); }
+		if (digitalRead(menuButton) == LOW && mix == 1) { EEPROM.write(1, reversCH1); key = 3; mix = 1; lcd_1 = 0; lcd_0 = 1; vst = 2; beep(); }
 		break;
 	case 12: //Revers CH2
 		if (digitalRead(minusButton) == LOW) { reversCH2 = !reversCH2; beep(); }
 		if (digitalRead(plassButton) == LOW) { reversCH2 = !reversCH2; beep(); }
 		lcd.setCursor(0, 1); lcd.print(reversCH2 ? myStrings[11] : myStrings[12]); lcd.print("                ");
-		if (digitalRead(menuButton) == LOW && mix == 1) { key = 3; mix = 2; lcd_1 = 0; lcd_0 = 1; vst = 2; beep(); }
+		if (digitalRead(menuButton) == LOW && mix == 1) { EEPROM.write(3, reversCH2); key = 3; mix = 2; lcd_1 = 0; lcd_0 = 1; vst = 2; beep(); }
 		break;
 	case 13: //Revers CH3
 		if (digitalRead(minusButton) == LOW) { reversCH3 = !reversCH3; beep(); }
 		if (digitalRead(plassButton) == LOW) { reversCH3 = !reversCH3; beep(); }
 		lcd.setCursor(0, 1); lcd.print(reversCH3 ? myStrings[11] : myStrings[12]); lcd.print("                ");
-		if (digitalRead(menuButton) == LOW && mix == 1) { key = 3; mix = 3; lcd_1 = 0; lcd_0 = 1; vst = 2; beep(); }
+		if (digitalRead(menuButton) == LOW && mix == 1) { EEPROM.write(5, reversCH3); key = 3; mix = 3; lcd_1 = 0; lcd_0 = 1; vst = 2; beep(); }
 		break;
 	case 14: //Revers CH4
 		if (digitalRead(minusButton) == LOW) { reversCH4 = !reversCH4; beep(); }
 		if (digitalRead(plassButton) == LOW) { reversCH4 = !reversCH4; beep(); }
 		lcd.setCursor(0, 1); lcd.print(reversCH4 ? myStrings[11] : myStrings[12]); lcd.print("                ");
-		if (digitalRead(menuButton) == LOW && mix == 1) { key = 3; mix = 4; lcd_1 = 0; lcd_0 = 1; vst = 2; beep(); }
+		if (digitalRead(menuButton) == LOW && mix == 1) { EEPROM.write(7, reversCH4); key = 3; mix = 4; lcd_1 = 0; lcd_0 = 1; vst = 2; beep(); }
 		break;
 	case 15: //Revers CH5
 		if (digitalRead(minusButton) == LOW) { reversCH5 = !reversCH5; beep(); }
 		if (digitalRead(plassButton) == LOW) { reversCH5 = !reversCH5; beep(); }
 		lcd.setCursor(0, 1); lcd.print(reversCH5 ? myStrings[11] : myStrings[12]); lcd.print("                ");
-		if (digitalRead(menuButton) == LOW && mix == 1) { key = 3; mix = 5; lcd_1 = 0; lcd_0 = 1; vst = 2; beep(); }
+		if (digitalRead(menuButton) == LOW && mix == 1) { EEPROM.write(9, reversCH5); key = 3; mix = 5; lcd_1 = 0; lcd_0 = 1; vst = 2; beep(); }
 		break;
 	case 16: //Revers CH6
 		if (digitalRead(minusButton) == LOW) { reversCH6 = !reversCH6; beep(); }
 		if (digitalRead(plassButton) == LOW) { reversCH6 = !reversCH6; beep(); }
 		lcd.setCursor(0, 1); lcd.print(reversCH6 ? myStrings[11] : myStrings[12]); lcd.print("                ");
-		if (digitalRead(menuButton) == LOW && mix == 1) { key = 3; mix = 6; lcd_1 = 0; lcd_0 = 1; vst = 2; beep(); }
+		if (digitalRead(menuButton) == LOW && mix == 1) { EEPROM.write(11, reversCH6); key = 3; mix = 6; lcd_1 = 0; lcd_0 = 1; vst = 2; beep(); }
 		break;
 	}
 
