@@ -1,4 +1,4 @@
-// ArduFlu v2.6b
+// ArduFlu v2.7b
 // Alex Rudyk
 // 18.06.2017
 
@@ -8,9 +8,7 @@
 #include <SPI.h>
 #include <nRF24L01.h>
 #include <RF24.h>
-
-#define maxEndPoint 85
-#define version "v2.6b"
+#include "Config.h"
 
 byte msg[8];
 const uint64_t pipe = 0xF0F1F2F3F4FF;
@@ -75,7 +73,7 @@ void setup() {
 	lcd.backlight();
 	lcd.setCursor(0, 0);
 	lcd.print("ArduFly6");
-	lcd.setCursor(10, 0);
+	lcd.setCursor(11, 0);
 	lcd.print(version);
 	lcd.setCursor(3, 1);
 	lcd.print("Loading...");
@@ -141,14 +139,14 @@ void loop() {
 		if (digitalRead(plassButton) == LOW) { mix++; beep(); } if (mix == 6) { mix = 1; }
 		if (mix == 1) { lcd_1 = 1; vst = 1; } //End Points
 		if (mix == 2) { lcd_1 = 1; vst = 2; } //Revers
-		if (mix == 3) { lcd_1 = 1; vst = 13; } //Save
-		if (mix == 4) { lcd_1 = 1; vst = 3; } //Deffoult Settings
-		if (mix == 5) { lcd_1 = 1; vst = 4; } //Return
+		//if (mix == 3) { lcd_1 = 1; vst = 13; } //Save
+		if (mix == 3) { lcd_1 = 1; vst = 3; } //Deffoult Settings
+		if (mix == 4) { lcd_1 = 1; vst = 4; } //Return
 		if (digitalRead(menuButton) == LOW && mix == 1) { key = 2; mix = 1; lcd_1 = 0; lcd_0 = 1; vst = 1; beep(); }
 		if (digitalRead(menuButton) == LOW && mix == 2) { key = 3; mix = 1; lcd_1 = 0; lcd_0 = 1; vst = 2; beep(); }
-		if (digitalRead(menuButton) == LOW && mix == 3) { key = 0; mix = 1; lcd_1 = 0; lcd.clear(); beep(); save(); }
-		if (digitalRead(menuButton) == LOW && mix == 4) { key = 4; mix = 1; lcd_1 = 0; lcd_0 = 1; vst = 14; beep(); }
-		if (digitalRead(menuButton) == LOW && mix == 5) { key = 0; mix = 1; lcd_1 = 0; lcd.clear(); beep(); }
+		//if (digitalRead(menuButton) == LOW && mix == 3) { key = 0; mix = 1; lcd_1 = 0; lcd.clear(); beep(); save(); }
+		if (digitalRead(menuButton) == LOW && mix == 3) { key = 4; mix = 1; lcd_1 = 0; lcd_0 = 1; vst = 14; beep(); }
+		if (digitalRead(menuButton) == LOW && mix == 4) { key = 0; mix = 1; lcd_1 = 0; lcd.clear(); beep(); }
 		break;
 	case 2: //End Points
 		if (digitalRead(minusButton) == LOW) { mix--; beep(); } if (mix == 0) { mix = 7; }
@@ -283,13 +281,13 @@ void loop() {
 		lcd.setCursor(0, 0);
 		lcd.print("ArduFly6");
 		lcd.setCursor(14, 0);
-		lcd.print(digitalRead(Right_tumb_2pos) ? "X2" : "X1");
+		lcd.print(digitalRead(Right_tumb_2pos) != onTumbPos ? "X2" : "X1");
 		lcd.setCursor(0, 1);
-		lcd.print(digitalRead(Left_tumb_2pos) ? "Arm   " : "Disarm");
+		lcd.print(digitalRead(Left_tumb_2pos) != onTumbPos ? "Arm   " : "Disarm");
 	}
 
 	//Send date
-	if (digitalRead(Left_tumb_2pos) == LOW) {   // Arm
+	if (digitalRead(Left_tumb_2pos) == onTumbPos) {   // Arm
 		int LJV = constrain(analogRead(Left_joy_vertical), 95, 890);
 		msg[2] = reversCH3 ? map(LJV, 95, 890, 180 - endPointCH3, endPointCH3) : map(LJV, 95, 890, endPointCH3, 180 - endPointCH3);
 	} else {
@@ -302,12 +300,12 @@ void loop() {
 	int ePCH5 = endPointCH5;
 	int ePCH6 = endPointCH6;
 
-	if (digitalRead(Right_tumb_2pos) == LOW) {
-		ePCH1 = ePCH1 / 2;
-		ePCH2 = ePCH2 / 2;
-		ePCH4 = ePCH4 / 2;
-		ePCH5 = ePCH5 / 2;
-		ePCH6 = ePCH6 / 2;
+	if (digitalRead(Right_tumb_2pos) == onTumbPos) {
+		ePCH1 = ePCH1 * 0.5;
+		ePCH2 = ePCH2 * 0.5;
+		ePCH4 = ePCH4 * 0.5;
+		ePCH5 = ePCH5 * 0.5;
+		ePCH6 = ePCH6 * 0.5;
 	}
 
 	if (reversCH1 == false) { // Eleron
