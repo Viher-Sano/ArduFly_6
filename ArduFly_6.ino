@@ -135,8 +135,8 @@ void loop() {
 	{
 	case 1: //Menu
 		//delay(del);
-		if (digitalRead(minusButton) == LOW) { mix--; beep(); } if (mix == 0) { mix = 5; }
-		if (digitalRead(plassButton) == LOW) { mix++; beep(); } if (mix == 6) { mix = 1; }
+		if (digitalRead(minusButton) == LOW) { mix--; beep(); } if (mix == 0) { mix = 4; }
+		if (digitalRead(plassButton) == LOW) { mix++; beep(); } if (mix == 5) { mix = 1; }
 		if (mix == 1) { lcd_1 = 1; vst = 1; } //End Points
 		if (mix == 2) { lcd_1 = 1; vst = 2; } //Revers
 		//if (mix == 3) { lcd_1 = 1; vst = 13; } //Save
