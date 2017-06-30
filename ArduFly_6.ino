@@ -1,4 +1,4 @@
-// ArduFlu v2.7b
+// ArduFlu v3.0b
 // Alex Rudyk
 // 18.06.2017
 
@@ -48,6 +48,7 @@ int endPointCH5 = 0;
 bool reversCH5 = false;
 int endPointCH6 = 0;
 bool reversCH6 = false;
+bool elevonMix = false;
 
 #define setPos(pin, chanel) (map(constrain(analogRead(pin), 95, 890), 95, 890, chanel, 180 - chanel))
 #define setReversPos(pin, chanel) (map(constrain(analogRead(pin), 95, 890), 95, 890, 180 - chanel, chanel))
@@ -62,7 +63,8 @@ byte del = 250;
 bool flag = false;
 long previousMillis = 0;
 boolean lcd_0 = 0; boolean lcd_1 = 0;
-char* myStrings[] = {"Menu", "End Points", "Revers", "Default Settings", "Return", "CH1", "CH2", "CH3", "CH4", "CH5", "CH6", "ON", "OFF", "Save", "Clean?", "NO", "YES"};
+char* myStrings[] = {"Menu", "End Points", "Revers", "Default Settings", "Return", "CH1", "CH2", "CH3", "CH4", "CH5", //0-9
+					 "CH6", "ON", "OFF", "Save", "Clean?", "NO", "YES", "Mixing", "Elevon"}; //10-18
 
 void setup() {
 	// Load var
@@ -139,14 +141,14 @@ void loop() {
 		if (digitalRead(plassButton) == LOW) { mix++; beep(); } if (mix == 6) { mix = 1; }
 		if (mix == 1) { lcd_1 = 1; vst = 1; } //End Points
 		if (mix == 2) { lcd_1 = 1; vst = 2; } //Revers
-		//if (mix == 3) { lcd_1 = 1; vst = 13; } //Save
-		if (mix == 3) { lcd_1 = 1; vst = 3; } //Deffoult Settings
-		if (mix == 4) { lcd_1 = 1; vst = 4; } //Return
+		if (mix == 3) { lcd_1 = 1; vst = 17; } //Mixing
+		if (mix == 4) { lcd_1 = 1; vst = 3; } //Deffoult Settings
+		if (mix == 5) { lcd_1 = 1; vst = 4; } //Return
 		if (digitalRead(menuButton) == LOW && mix == 1) { key = 2; mix = 1; lcd_1 = 0; lcd_0 = 1; vst = 1; beep(); }
 		if (digitalRead(menuButton) == LOW && mix == 2) { key = 3; mix = 1; lcd_1 = 0; lcd_0 = 1; vst = 2; beep(); }
-		//if (digitalRead(menuButton) == LOW && mix == 3) { key = 0; mix = 1; lcd_1 = 0; lcd.clear(); beep(); save(); }
-		if (digitalRead(menuButton) == LOW && mix == 3) { key = 4; mix = 1; lcd_1 = 0; lcd_0 = 1; vst = 14; beep(); }
-		if (digitalRead(menuButton) == LOW && mix == 4) { key = 0; mix = 1; lcd_1 = 0; lcd.clear(); beep(); }
+		if (digitalRead(menuButton) == LOW && mix == 3) { key = 17; mix = 1; lcd_1 = 0; lcd_0 = 1; vst = 17; beep(); }
+		if (digitalRead(menuButton) == LOW && mix == 4) { key = 4; mix = 1; lcd_1 = 0; lcd_0 = 1; vst = 14; beep(); }
+		if (digitalRead(menuButton) == LOW && mix == 5) { key = 0; mix = 1; lcd_1 = 0; lcd.clear(); beep(); }
 		break;
 	case 2: //End Points
 		if (digitalRead(minusButton) == LOW) { mix--; beep(); } if (mix == 0) { mix = 7; }
@@ -264,6 +266,20 @@ void loop() {
 		lcd.setCursor(0, 1); lcd.print(reversCH6 ? myStrings[11] : myStrings[12]); lcd.print("                ");
 		if (digitalRead(menuButton) == LOW && mix == 1) { EEPROM.write(11, reversCH6); key = 3; mix = 6; lcd_1 = 0; lcd_0 = 1; vst = 2; beep(); }
 		break;
+	case 17: //Mixing
+		if (digitalRead(minusButton) == LOW) { mix--; beep(); } if (mix == 0) { mix = 2; }
+		if (digitalRead(plassButton) == LOW) { mix++; beep(); } if (mix == 3) { mix = 1; }
+		if (mix == 1) { lcd_1 = 1; vst = 18; } //Elevon
+		if (mix == 2) { lcd_1 = 1; vst = 4; } //Return
+		if (digitalRead(menuButton) == LOW && mix == 1) { key = 18; mix = 1; lcd_1 = 0; lcd_0 = 1; vst = 18; beep(); }
+		if (digitalRead(menuButton) == LOW && mix == 2) { key = 1; mix = 3; lcd_1 = 0; lcd_0 = 1; vst = 0; beep(); }
+		break;
+	case 18: //Elevon
+		if (digitalRead(minusButton) == LOW) { elevonMix = !elevonMix; beep(); }
+		if (digitalRead(plassButton) == LOW) { elevonMix = !elevonMix; beep(); }
+		lcd.setCursor(0, 1); lcd.print(elevonMix ? myStrings[11] : myStrings[12]); lcd.print("                ");
+		if (digitalRead(menuButton) == LOW && mix == 1) { EEPROM.write(12, elevonMix); key = 17; mix = 1; lcd_1 = 0; lcd_0 = 1; vst = 17; beep(); }
+		break;
 	}
 
 	if (pas >= 5) {
@@ -280,6 +296,7 @@ void loop() {
 	if (lcd_0 == 0 && lcd_1 == 0 && key == 0) {
 		lcd.setCursor(0, 0);
 		lcd.print("ArduFly6");
+		//lcd.print(msg[0]); lcd.print(" "); lcd.print(msg[1]); lcd.print("    ");
 		lcd.setCursor(14, 0);
 		lcd.print(digitalRead(Right_tumb_2pos) != onTumbPos ? "X2" : "X1");
 		lcd.setCursor(0, 1);
@@ -308,16 +325,50 @@ void loop() {
 		ePCH6 = ePCH6 * 0.5;
 	}
 
-	if (reversCH1 == false) { // Eleron
-		msg[0] = setPos(Right_joy_horizon, ePCH1);
-	} else {
-		msg[0] = setReversPos(Right_joy_horizon, ePCH1);
-	}
+	//if (elevonMix == false) { // Evelon OFF
+		if (reversCH1 == false) { // Eleron
+			msg[0] = setPos(Right_joy_horizon, ePCH1);
+		} else {
+			msg[0] = setReversPos(Right_joy_horizon, ePCH1);
+		}
 
-	if (reversCH2 == false) { // Visota
-		msg[1] = setPos(Right_joy_vertical, ePCH2);
-	} else {
-		msg[1] = setReversPos(Right_joy_vertical, ePCH2);
+		if (reversCH2 == false) { // Visota
+			msg[1] = setPos(Right_joy_vertical, ePCH2);
+		} else {
+			msg[1] = setReversPos(Right_joy_vertical, ePCH2);
+		}
+	/*} else*/ if (elevonMix == false) { // Evelon ON
+		static int eleron;
+		static int visota;
+
+		eleron = msg[0];//map(constrain(analogRead(Right_joy_horizon), 95, 890), 95, 890, 0, 180);
+		visota = map(msg[1], 0, 180, 180, 0);//map(constrain(analogRead(Right_joy_vertical), 95, 890), 95, 890, 180, 0);
+		
+		static long elevon1;
+		static long elevon2;
+
+		if (eleron < 90) {
+			elevon1 = map(eleron, 0, 90, 0, visota);
+			elevon2 = map(eleron, 0, 90, 0, map(visota, 0, 180, 180, 0));
+		} else {
+			elevon1 = map(eleron, 90, 180, visota, 180);
+			elevon2 = map(eleron, 90, 180, map(visota, 0, 180, 180, 0), 180);
+		}
+
+		msg[0] = elevon1;
+		msg[1] = elevon2;
+
+		/*if (reversCH1 == false) { // Eleron
+			msg[0] = map(elevon1, 0, 180, ePCH1, 180 - ePCH1);
+		} else {
+			msg[0] = map(elevon1, 0, 180, 180 - ePCH1, ePCH1);
+		}
+
+		if (reversCH2 == false) { // Visota
+			msg[1] = map(elevon2, 0, 180, ePCH2, 180 - ePCH2);;
+		} else {
+			msg[1] = map(elevon2, 0, 180, 180 - ePCH2, ePCH2);;
+		}*/
 	}
 
 	if (reversCH4 == false) { // Napravlena
@@ -362,6 +413,7 @@ void save() {
 	EEPROM.write(9, reversCH5);
 	EEPROM.write(10, endPointCH6);
 	EEPROM.write(11, reversCH6);
+	EEPROM.write(12, elevonMix);
 
 	beep(); 
 	delay(100);
@@ -382,6 +434,7 @@ void load () {
 	reversCH5 = EEPROM.read(9);
 	endPointCH6 = EEPROM.read(10);
 	reversCH6 = EEPROM.read(11);
+	elevonMix = EEPROM.read(12);
 }
 
 void defset() {
