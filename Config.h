@@ -4,6 +4,6 @@
 // 18.06.2017
 
 
-#define maxEndPoint 85
-#define version "v2.7b"
-#define onTumbPos LOW
+#define maxEndPoint 85 // Max value for End Points
+#define version "v3.0b" // Version
+#define onTumbPos LOW // 
