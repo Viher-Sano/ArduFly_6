@@ -1,4 +1,4 @@
-// ArduFlu v3.0b
+// ArduFlu v3.2b
 // Alex Rudyk
 // 18.06.2017
 
@@ -11,29 +11,9 @@
 #include "Config.h"
 
 byte msg[8];
-const uint64_t pipe = 0xF0F1F2F3F4FF;
 RF24 radio(9, 10);
 
-
-// Pin for controler
-int Right_joy_horizon = 0;
-int Right_joy_vertical = 1;
-int Left_joy_horizon = 2;
-int Left_joy_vertical = 3;
-int Right_knob = 6;
-int Left_knob = 7;
-
-byte Right_tumb_2pos = 8;
-byte Left_tumb_2pos = 6;
-
-
 LiquidCrystal_I2C lcd(0x3F, 16, 2);  // set the LCD address to 0x3F for a 16 chars and 2 line display
-
-byte buzzer = 3;
-
-byte menuButton = 7;
-byte plassButton = 4;
-byte minusButton = 5;
 
 // Var for Chanels
 int endPointCH1 = 0;
@@ -53,6 +33,8 @@ bool elevonMix = false;
 #define setPos(pin, chanel) (map(constrain(analogRead(pin), 95, 890), 95, 890, chanel, 180 - chanel))
 #define setReversPos(pin, chanel) (map(constrain(analogRead(pin), 95, 890), 95, 890, 180 - chanel, chanel))
 
+#define version "v3.2b" // Version
+
 // Var for Menu
 byte key = 0;
 byte tim = 4;
@@ -63,8 +45,8 @@ byte del = 250;
 bool flag = false;
 long previousMillis = 0;
 boolean lcd_0 = 0; boolean lcd_1 = 0;
-char* myStrings[] = {"Menu", "End Points", "Revers", "Default Settings", "Return", "CH1", "CH2", "CH3", "CH4", "CH5", //0-9
-					 "CH6", "ON", "OFF", "Save", "Clean?", "NO", "YES", "Mixing", "Elevon"}; //10-18
+char* myStrings[] = { "Menu", "End Points", "Revers", "Default Settings", "Return", "CH1", "CH2", "CH3", "CH4", "CH5", //0-9
+					 "CH6", "ON", "OFF", "Save", "Clean?", "NO", "YES", "Mixing", "Elevon" }; //10-18
 
 void setup() {
 	// Load var
@@ -93,9 +75,9 @@ void setup() {
 	digitalWrite(minusButton, HIGH);
 	digitalWrite(Right_tumb_2pos, HIGH);
 	digitalWrite(Left_tumb_2pos, HIGH);
-	
+
 	beep();
-	
+
 	radio.begin();
 	delay(50);
 	radio.setChannel(1);
@@ -104,7 +86,7 @@ void setup() {
 	radio.setRetries(1, 1);
 	radio.setDataRate(RF24_250KBPS);
 	radio.setPALevel(RF24_PA_HIGH);
-	radio.openWritingPipe(pipe);
+	radio.openWritingPipe(pipeConst);
 
 	beep();
 	beep();
@@ -121,12 +103,12 @@ void loop() {
 		lcd_1 = 0;
 	}
 
-	if (digitalRead(menuButton) == LOW && flag == false) { 
+	if (digitalRead(menuButton) == LOW && flag == false) {
 		if (millis() - previousMillis > 500) {
 			previousMillis = millis();
 			pas++;
-			
-		} 
+
+		}
 	} else { pas = 0; }
 
 	if (digitalRead(menuButton) == HIGH && flag == true) {
@@ -325,50 +307,16 @@ void loop() {
 		ePCH6 = ePCH6 * 0.5;
 	}
 
-	//if (elevonMix == false) { // Evelon OFF
-		if (reversCH1 == false) { // Eleron
-			msg[0] = setPos(Right_joy_horizon, ePCH1);
-		} else {
-			msg[0] = setReversPos(Right_joy_horizon, ePCH1);
-		}
+	if (reversCH1 == false) { // Eleron
+		msg[0] = setPos(Right_joy_horizon, ePCH1);
+	} else {
+		msg[0] = setReversPos(Right_joy_horizon, ePCH1);
+	}
 
-		if (reversCH2 == false) { // Visota
-			msg[1] = setPos(Right_joy_vertical, ePCH2);
-		} else {
-			msg[1] = setReversPos(Right_joy_vertical, ePCH2);
-		}
-	/*} else*/ if (elevonMix == false) { // Evelon ON
-		static int eleron;
-		static int visota;
-
-		eleron = msg[0];//map(constrain(analogRead(Right_joy_horizon), 95, 890), 95, 890, 0, 180);
-		visota = map(msg[1], 0, 180, 180, 0);//map(constrain(analogRead(Right_joy_vertical), 95, 890), 95, 890, 180, 0);
-		
-		static long elevon1;
-		static long elevon2;
-
-		if (eleron < 90) {
-			elevon1 = map(eleron, 0, 90, 0, visota);
-			elevon2 = map(eleron, 0, 90, 0, map(visota, 0, 180, 180, 0));
-		} else {
-			elevon1 = map(eleron, 90, 180, visota, 180);
-			elevon2 = map(eleron, 90, 180, map(visota, 0, 180, 180, 0), 180);
-		}
-
-		msg[0] = elevon1;
-		msg[1] = elevon2;
-
-		/*if (reversCH1 == false) { // Eleron
-			msg[0] = map(elevon1, 0, 180, ePCH1, 180 - ePCH1);
-		} else {
-			msg[0] = map(elevon1, 0, 180, 180 - ePCH1, ePCH1);
-		}
-
-		if (reversCH2 == false) { // Visota
-			msg[1] = map(elevon2, 0, 180, ePCH2, 180 - ePCH2);;
-		} else {
-			msg[1] = map(elevon2, 0, 180, 180 - ePCH2, ePCH2);;
-		}*/
+	if (reversCH2 == false) { // Visota
+		msg[1] = setPos(Right_joy_vertical, ePCH2);
+	} else {
+		msg[1] = setReversPos(Right_joy_vertical, ePCH2);
 	}
 
 	if (reversCH4 == false) { // Napravlena
@@ -387,6 +335,28 @@ void loop() {
 		msg[5] = setPos(Right_knob, ePCH6);
 	} else {
 		msg[5] = setReversPos(Right_knob, ePCH6);
+	}
+
+	if (elevonMix == true) { // Evelon ON
+		static int eleron;
+		static int visota;
+
+		eleron = msg[0];
+		visota = map(msg[1], 0, 180, 180, 0);
+
+		static long elevon1;
+		static long elevon2;
+
+		if (eleron < 90) {
+			elevon1 = map(eleron, 0, 90, 0, visota);
+			elevon2 = map(eleron, 0, 90, 0, map(visota, 0, 180, 180, 0));
+		} else {
+			elevon1 = map(eleron, 90, 180, visota, 180);
+			elevon2 = map(eleron, 90, 180, map(visota, 0, 180, 180, 0), 180);
+		}
+
+		msg[0] = elevon1;
+		msg[1] = elevon2;
 	}
 
 	radio.write(&msg, sizeof(msg));
@@ -415,12 +385,12 @@ void save() {
 	EEPROM.write(11, reversCH6);
 	EEPROM.write(12, elevonMix);
 
-	beep(); 
+	beep();
 	delay(100);
 	beep();
 }
 
-void load () {
+void load() {
 	// Load of EEPROM
 	endPointCH1 = EEPROM.read(0);
 	reversCH1 = EEPROM.read(1);
@@ -440,7 +410,7 @@ void load () {
 void defset() {
 	lcd.setCursor(3, 0);
 	lcd.print("Loading...");
-	for (int i = 0; i < EEPROM.length(); i++) 
+	for (int i = 0; i < EEPROM.length(); i++)
 		EEPROM.write(i, 0);
 
 	load();
